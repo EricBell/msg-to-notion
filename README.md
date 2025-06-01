@@ -1,4 +1,4 @@
-Email-To-Notion
+msg-to-notion
 
 Create an .env file
 NOTION_TOKEN=secret_xxx_your_token_here
