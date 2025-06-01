@@ -1,28 +1,26 @@
-# email-to-notion.py
-
 import os
 from dotenv import load_dotenv
 from notion_client import Client
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("DATABASE_ID")
 
-# Initialize Notion client
+# Initialize the Notion client
 notion = Client(auth=NOTION_TOKEN)
 
-def add_message_to_notion(short_description: str, message_body: str):
-    # Step 1: Create the page
+def create_notion_entry(title: str, description: str):
+    # Step 1: Create a page in the database
     response = notion.pages.create(
         parent={"database_id": DATABASE_ID},
         properties={
-            "Title": {
+            "Page": {
                 "title": [
                     {
                         "text": {
-                            "content": short_description
+                            "content": title
                         }
                     }
                 ]
@@ -37,7 +35,7 @@ def add_message_to_notion(short_description: str, message_body: str):
                         {
                             "type": "text",
                             "text": {
-                                "content": message_body
+                                "content": description
                             }
                         }
                     ]
@@ -46,26 +44,11 @@ def add_message_to_notion(short_description: str, message_body: str):
         ]
     )
 
-    # Step 2: Update page with its own URL in "Page link" property
-    page_id = response["id"]
-    page_url = response["url"]
-
-    notion.pages.update(
-        page_id=page_id,
-        properties={
-            "Page link": {
-                "url": page_url
-            }
-        }
-    )
-
-    print("✅ Page created and link saved:")
-    print(f"Title: {short_description}")
-    print(f"Page URL: {page_url}")
-    return page_url
+    print(f"✅ Page created: {response['url']}")
+    return response["url"]
 
 # Example usage
 if __name__ == "__main__":
-    short_description = "Sample: Secure Notion Entry"
-    message_body = "This content was posted securely using environment variables."
-    add_message_to_notion(short_description, message_body)
+    message_title = "Meeting Notes: May 24"
+    message_description = "Discussed Notion automation and VS Code GitHub integration."
+    create_notion_entry(message_title, message_description)
