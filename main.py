@@ -10,6 +10,7 @@ DATABASE_ID = os.getenv("DATABASE_ID")
 
 # Initialize the Notion client
 notion = Client(auth=NOTION_TOKEN)
+print(f"notion token: {notion}")
 
 def create_notion_entry(title: str, description: str):
     # Step 1: Create a page in the database
